@@ -1,4 +1,7 @@
+#include <stdbool.h>
 #include "wordClock.h"
+
+int (*fp_drawPixel)(int,int,int);
 
 clockWord_t es;
 clockWord_t ist;
@@ -23,8 +26,9 @@ clockWord_t h_zehn;
 clockWord_t h_neun;
 clockWord_t uhr;
 
-
-void initWords() {
+void initWords(void *fptr) {
+  fp_drawPixel = fptr;
+  
   es.row = 0;
   es.startPixel = 0;
   es.endPixel = 1;
@@ -114,7 +118,150 @@ void initWords() {
   uhr.row =10;
 }
 
+
 void displayWord(clockWord_t cw, int color) {
+  for (int x=cw.startPixel; x<=cw.endPixel; x++) {
+    (*fp_drawPixel)(x, cw.row, color);
+  }
+}
+
+
+void updateClockDisplay(int color, int hh, int mm) {
+  static bool updated = false;
+
+  if (((mm % 5) == 0) && !updated) {
+    updateClockDisplay_int( color,  hh,  mm);
+    updated = true;
+  }
+
+  if ((mm % 5) == 1) {
+    updated = false;
+  }
+}
+
+void updateClockDisplay_int(int color, int hh, int mm) {
+  int dispH = hh;
+
+  displayWord(es, color);
+  displayWord(ist, color);
   
+  Serial.print("Es ist ");
+  if ((mm>4) && (mm<10)) {
+    MFUENF;
+    NACH;
+    Serial.print("fuenf nach ");
+  }
+  if ((mm>9) && (mm<15)) {
+    MZEHN;
+    NACH;
+    Serial.print("zehn nach ");
+  }
+  if ((mm>14) && (mm<20)) {
+    VIERTEL;
+    Serial.print("viertel ");
+  }
+  if ((mm>19) && (mm<25)) {
+    MZEHN;
+    VOR;
+    HALB;
+    Serial.print("zehn vor halb ");
+  }
+  if ((mm>24) && (mm<30)) {
+    MFUENF;
+    VOR;
+    HALB;
+    Serial.print("fuenf vor halb ");
+  }
+  if ((mm>29) && (mm<35)) {
+    HALB;
+    Serial.print("halb ");
+  }
+  if ((mm>34) && (mm<40)) {
+    MFUENF;
+    NACH;
+    HALB;
+    Serial.print("fuenf nach halb ");
+  }
+  if ((mm>39) && (mm<45)) {
+    MZEHN;
+    NACH;
+    HALB;
+    Serial.print("zehn nach halb ");
+  }
+  if ((mm>44) && (mm<50)) {
+    DREIVIERTEL;
+    Serial.print("dreiviertel ");
+  }
+  if ((mm>49) && (mm<55)) {
+    MZEHN;
+    VOR;
+    Serial.print("zehn vor ");
+  }
+  if (mm>54) {
+    MFUENF;
+    VOR;
+    Serial.print("fuenf vor ");
+  }  
+  if (mm>14) {
+    dispH++;
+  }
+  dispH = dispH % 12;
+  switch (dispH) {
+  case 1: 
+    EINS;
+    Serial.print("Eins ");
+    break;
+  case 2: 
+    ZWEI;
+    Serial.print("Zwei ");
+    break;
+  case 3:
+    DREI;
+    Serial.print("Drei ");
+    break;
+  case 4:
+    VIER;
+    Serial.print("Vier ");
+    break;
+  case 5:
+    FUENF;
+    Serial.print("Fuenf ");
+    break;
+  case 6:
+    SECHS;
+    Serial.print("Sechs ");
+    break;
+  case 7:
+    SIEBEN;
+    Serial.print("Sieben ");
+    break;
+  case 8:
+    ACHT;
+    Serial.print("Acht ");
+    break;
+  case 9:
+    NEUN;
+    Serial.print("Neun ");
+    break;
+  case 10:
+    ZEHN;
+    Serial.print("Zehn ");
+    break;
+  case 11:
+    ELF;
+    Serial.print("Elf ");
+    break;
+  case 0:
+    ZWOELF;
+    Serial.print("Zwoelf ");
+    break;
+  }
+  if (mm<5) {
+    UM;
+    Serial.print("Uhr ");
+  }  
+  Serial.print("\n");
+
+
 }
 
