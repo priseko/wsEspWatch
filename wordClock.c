@@ -5,6 +5,24 @@ clockWord_t ist;
 clockWord_t m_fuenf;
 clockWord_t m_zehn;
 clockWord_t m_zwanzig;
+clockWord_t m_dreiviertel;
+clockWord_t vor;
+clockWord_t nach;
+clockWord_t halb;
+clockWord_t h_elf;
+clockWord_t h_fuenf;
+clockWord_t h_eins;
+clockWord_t h_zwei;
+clockWord_t h_drei;
+clockWord_t h_vier;
+clockWord_t h_sechs;
+clockWord_t h_acht;
+clockWord_t h_sieben;
+clockWord_t h_zwoelf;
+clockWord_t h_zehn;
+clockWord_t h_neun;
+clockWord_t uhr;
+
 
 void initWords() {
   es.row = 0;
@@ -13,7 +31,7 @@ void initWords() {
 
   ist.row = 0;
   ist.startPixel = 3;
-  tst.endPixel = 5;
+  ist.endPixel = 5;
 
   m_fuenf.row = 0;
   m_fuenf.startPixel = 7;
@@ -47,8 +65,8 @@ void initWords() {
   h_elf.startPixel = 5 ;
   h_elf.endPixel = 7 ;
 
-  h_feunf.row = 4 ;
-  h_feunf.startPixel = 7 ;
+  h_fuenf.row = 4 ;
+  h_fuenf.startPixel = 7 ;
   h_fuenf.endPixel = 10 ;
 
   h_eins.row = 5 ;
