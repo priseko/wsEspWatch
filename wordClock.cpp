@@ -26,6 +26,8 @@ clockWord_t h_zehn;
 clockWord_t h_neun;
 clockWord_t uhr;
 
+extern Adafruit_NeoMatrix matrix;
+
 void initWords() {  
   es.row = 0;
   es.startPixel = 0;
@@ -121,21 +123,20 @@ void initWords() {
 }
 
 
-void displayWord(Adafruit_NeoMatrix matrix, clockWord_t cw, int color) {
+void displayWord(clockWord_t cw, int color) {
   for (int x=cw.startPixel; x<=cw.endPixel; x++) {
    matrix.drawPixel(x, cw.row, color);
-   Serial.printf("x: %d, y: %d, color: %d \n", x, cw.row, color);
   }
 }
 
 
-bool updateClockDisplay(Adafruit_NeoMatrix matrix, int color, int hh, int mm) {
+bool updateClockDisplay(int color, int hh, int mm) {
   static bool initial = false;
   static bool updated = false;
   bool retVal = false;
 
   if ((!initial) || (((mm % 5) == 0) && !updated)) {
-    updateClockDisplay_int(matrix, color,  hh,  mm);
+    updateClockDisplay_int(color,  hh,  mm);
     updated = true;
     initial = true;
     retVal = true;
@@ -148,67 +149,69 @@ bool updateClockDisplay(Adafruit_NeoMatrix matrix, int color, int hh, int mm) {
   return retVal;
 }
 
-void updateClockDisplay_int(Adafruit_NeoMatrix matrix, int color, int hh, int mm) {
+void updateClockDisplay_int(int color, int hh, int mm) {
   int dispH = hh;
-
-  displayWord(matrix, es, color);
-  displayWord(matrix, ist, color);
+  
+  matrix.fillScreen(0);
+  
+  displayWord(es, color);
+  displayWord(ist, color);
   
   Serial.print(" Es ist ");
   if ((mm>4) && (mm<10)) {
-    displayWord(matrix, m_fuenf, color);
-    displayWord(matrix, nach, color);
+    displayWord(m_fuenf, color);
+    displayWord(nach, color);
     Serial.print("fuenf nach ");
   }
   if ((mm>9) && (mm<15)) {
-    displayWord(matrix, m_zehn, color);
-    displayWord(matrix, nach, color);
+    displayWord(m_zehn, color);
+    displayWord(nach, color);
     Serial.print("zehn nach ");
   }
   if ((mm>14) && (mm<20)) {
-    displayWord(matrix, m_viertel, color);
+    displayWord(m_viertel, color);
     Serial.print("viertel ");
   }
   if ((mm>19) && (mm<25)) {
-    displayWord(matrix, m_zehn, color);
-    displayWord(matrix, vor, color);
-    displayWord(matrix, halb, color);
+    displayWord(m_zehn, color);
+    displayWord(vor, color);
+    displayWord(halb, color);
     Serial.print("zehn vor halb ");
   }
   if ((mm>24) && (mm<30)) {
-    displayWord(matrix, m_fuenf, color);
-    displayWord(matrix, vor, color);
-    displayWord(matrix, halb, color);
+    displayWord(m_fuenf, color);
+    displayWord(vor, color);
+    displayWord(halb, color);
     Serial.print("fuenf vor halb ");
   }
   if ((mm>29) && (mm<35)) {
-    displayWord(matrix, halb, color);
+    displayWord(halb, color);
     Serial.print("halb ");
   }
   if ((mm>34) && (mm<40)) {
-    displayWord(matrix, m_fuenf, color);
-    displayWord(matrix, nach, color);
-    displayWord(matrix, halb, color);
+    displayWord(m_fuenf, color);
+    displayWord(nach, color);
+    displayWord(halb, color);
     Serial.print("fuenf nach halb ");
   }
   if ((mm>39) && (mm<45)) {
-    displayWord(matrix, m_zehn, color);
-    displayWord(matrix, nach, color);
-    displayWord(matrix, halb, color);
+    displayWord(m_zehn, color);
+    displayWord(nach, color);
+    displayWord(halb, color);
     Serial.print("zehn nach halb ");
   }
   if ((mm>44) && (mm<50)) {
-    displayWord(matrix, m_dreiviertel, color);
+    displayWord(m_dreiviertel, color);
     Serial.print("dreiviertel ");
   }
   if ((mm>49) && (mm<55)) {
-    displayWord(matrix, m_zehn, color);
-    displayWord(matrix, vor, color);
+    displayWord(m_zehn, color);
+    displayWord(vor, color);
     Serial.print("zehn vor ");
   }
   if (mm>54) {
-    displayWord(matrix, m_fuenf, color);
-    displayWord(matrix, vor, color);
+    displayWord(m_fuenf, color);
+    displayWord(vor, color);
     Serial.print("fuenf vor ");
   }  
   if (mm>14) {
@@ -217,58 +220,59 @@ void updateClockDisplay_int(Adafruit_NeoMatrix matrix, int color, int hh, int mm
   dispH = dispH % 12;
   switch (dispH) {
   case 1: 
-    displayWord(matrix, h_eins, color);
+    displayWord(h_eins, color);
     Serial.print("Eins ");
     break;
   case 2: 
-    displayWord(matrix, h_zwei, color);
+    displayWord(h_zwei, color);
     Serial.print("Zwei ");
     break;
   case 3:
-    displayWord(matrix, h_drei, color);
+    displayWord(h_drei, color);
     Serial.print("Drei ");
     break;
   case 4:
-    displayWord(matrix, h_vier, color);
+    displayWord(h_vier, color);
     Serial.print("Vier ");
     break;
   case 5:
-    displayWord(matrix, h_fuenf, color);
+    displayWord(h_fuenf, color);
     Serial.print("Fuenf ");
     break;
   case 6:
-    displayWord(matrix, h_sechs, color);
+    displayWord(h_sechs, color);
     Serial.print("Sechs ");
     break;
   case 7:
-    displayWord(matrix, h_sieben, color);
+    displayWord(h_sieben, color);
     Serial.print("Sieben ");
     break;
   case 8:
-    displayWord(matrix, h_acht, color);
+    displayWord(h_acht, color);
     Serial.print("Acht ");
     break;
   case 9:
-    displayWord(matrix, h_neun, color);
+    displayWord(h_neun, color);
     Serial.print("Neun ");
     break;
   case 10:
-    displayWord(matrix, h_zehn, color);
+    displayWord(h_zehn, color);
     Serial.print("Zehn ");
     break;
   case 11:
-    displayWord(matrix, h_elf, color);
+    displayWord(h_elf, color);
     Serial.print("Elf ");
     break;
   case 0:
-    displayWord(matrix, h_zwoelf, color);
+    displayWord(h_zwoelf, color);
     Serial.print("Zwoelf ");
     break;
   }
   if (mm<5) {
-    displayWord(matrix, uhr, color);
+    displayWord(uhr, color);
     Serial.print("Uhr ");
   }  
+
   Serial.print("\n");
 
 }

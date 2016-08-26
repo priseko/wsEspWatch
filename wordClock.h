@@ -7,8 +7,8 @@ typedef struct clockWord_t {
 } clockWord_t;
 
 void initWords();
-bool updateClockDisplay(Adafruit_NeoMatrix matrix,int color, int hh, int mm);
+bool updateClockDisplay(int color, int hh, int mm);
 
-static void updateClockDisplay_int(Adafruit_NeoMatrix matrix, int color, int hh, int mm);
+static void updateClockDisplay_int(int color, int hh, int mm);
 
 

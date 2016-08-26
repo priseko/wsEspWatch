@@ -1,3 +1,5 @@
+#include <stdbool.h>
+#include <NTPClient.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_NeoMatrix.h>
 #include <Adafruit_NeoPixel.h>
@@ -6,45 +8,57 @@
 
 #define PIN (4)
 
+const char *ssid     = "netz";
+const char *password = "#netz4all!";
+
 Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(11, 10, PIN,
   NEO_MATRIX_TOP     + NEO_MATRIX_LEFT +
   NEO_MATRIX_COLUMNS + NEO_MATRIX_ZIGZAG,
   NEO_GRB            + NEO_KHZ800);
 
+int color;
+int lastDispSec = 0;
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "de.pool.ntp.org", 7200 /* 2h offset */, 60000 /* Update once per minute*/);
+
 void setup() {
   int pixel;
   Serial.begin(115200);
+  WiFi.begin(ssid, password);
+
+  while ( WiFi.status() != WL_CONNECTED ) {
+    delay ( 500 );
+    Serial.print ( "." );
+  }
+
+  timeClient.begin();
   
   matrix.begin();
   matrix.setTextWrap(false);
   matrix.setBrightness(40);
   matrix.fillScreen(0);
-  
-  //ES_IST(matrix, matrix.Color(255, 0, 0))
-
-  int color = matrix.Color(255, 0, 0);
-
-  matrix.drawPixel(0, 0, color);  
-  matrix.drawPixel(1, 0, color);  
-  matrix.drawPixel(3, 0, color); 
-  matrix.drawPixel(4, 0, color); 
-  matrix.drawPixel(5, 0, color);
-
+  color = matrix.Color(255, 0, 0);
   matrix.show();
+
+  Serial.printf("Matrix: %X \n", &matrix);
+
+  initWords();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  timeClient.update();
 
+  int seconds = timeClient.getSeconds();
+  if (lastDispSec != seconds) {
+    lastDispSec = seconds;
+    Serial.println(timeClient.getFormattedTime());
+  }
+
+  if (updateClockDisplay(color, timeClient.getHours(), timeClient.getMinutes())) {
+    matrix.show();
+  }
 }
 
-int coordToPixel(int x, int y) {
-  int pixel = (((x+1)/2) * 20) - (x % 2);
 
-  pixel = pixel + ((y+1) * ((-1)^x));
-
-  Serial.printf("X: %d Y: %d Pixel: %d \n",x, y, pixel);
-  
-  return pixel;
-}
 
