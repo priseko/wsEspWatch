@@ -8,6 +8,7 @@ clockWord_t m_fuenf;
 clockWord_t m_zehn;
 clockWord_t m_zwanzig;
 clockWord_t m_dreiviertel;
+clockWord_t m_viertel;
 clockWord_t vor;
 clockWord_t nach;
 clockWord_t halb;
@@ -49,6 +50,10 @@ void initWords() {
   m_dreiviertel.row = 2 ;
   m_dreiviertel.startPixel = 0 ;
   m_dreiviertel.endPixel = 10 ;
+
+  m_viertel.row = 2;
+  m_viertel.startPixel = 4 ;
+  m_viertel.endPixel = 10 ;
 
   vor.row = 3 ;
   vor.startPixel = 0 ;
@@ -149,61 +154,61 @@ void updateClockDisplay_int(Adafruit_NeoMatrix matrix, int color, int hh, int mm
   displayWord(matrix, es, color);
   displayWord(matrix, ist, color);
   
-  Serial.print("Es ist ");
+  Serial.print(" Es ist ");
   if ((mm>4) && (mm<10)) {
-    MFUENF;
-    NACH;
+    displayWord(matrix, m_fuenf, color);
+    displayWord(matrix, nach, color);
     Serial.print("fuenf nach ");
   }
   if ((mm>9) && (mm<15)) {
-    MZEHN;
-    NACH;
+    displayWord(matrix, m_zehn, color);
+    displayWord(matrix, nach, color);
     Serial.print("zehn nach ");
   }
   if ((mm>14) && (mm<20)) {
-    VIERTEL;
+    displayWord(matrix, m_viertel, color);
     Serial.print("viertel ");
   }
   if ((mm>19) && (mm<25)) {
-    MZEHN;
-    VOR;
-    HALB;
+    displayWord(matrix, m_zehn, color);
+    displayWord(matrix, vor, color);
+    displayWord(matrix, halb, color);
     Serial.print("zehn vor halb ");
   }
   if ((mm>24) && (mm<30)) {
-    MFUENF;
-    VOR;
-    HALB;
+    displayWord(matrix, m_fuenf, color);
+    displayWord(matrix, vor, color);
+    displayWord(matrix, halb, color);
     Serial.print("fuenf vor halb ");
   }
   if ((mm>29) && (mm<35)) {
-    HALB;
+    displayWord(matrix, halb, color);
     Serial.print("halb ");
   }
   if ((mm>34) && (mm<40)) {
-    MFUENF;
-    NACH;
-    HALB;
+    displayWord(matrix, m_fuenf, color);
+    displayWord(matrix, nach, color);
+    displayWord(matrix, halb, color);
     Serial.print("fuenf nach halb ");
   }
   if ((mm>39) && (mm<45)) {
-    MZEHN;
-    NACH;
-    HALB;
+    displayWord(matrix, m_zehn, color);
+    displayWord(matrix, nach, color);
+    displayWord(matrix, halb, color);
     Serial.print("zehn nach halb ");
   }
   if ((mm>44) && (mm<50)) {
-    DREIVIERTEL;
+    displayWord(matrix, m_dreiviertel, color);
     Serial.print("dreiviertel ");
   }
   if ((mm>49) && (mm<55)) {
-    MZEHN;
-    VOR;
+    displayWord(matrix, m_zehn, color);
+    displayWord(matrix, vor, color);
     Serial.print("zehn vor ");
   }
   if (mm>54) {
-    MFUENF;
-    VOR;
+    displayWord(matrix, m_fuenf, color);
+    displayWord(matrix, vor, color);
     Serial.print("fuenf vor ");
   }  
   if (mm>14) {
@@ -212,56 +217,56 @@ void updateClockDisplay_int(Adafruit_NeoMatrix matrix, int color, int hh, int mm
   dispH = dispH % 12;
   switch (dispH) {
   case 1: 
-    EINS;
+    displayWord(matrix, h_eins, color);
     Serial.print("Eins ");
     break;
   case 2: 
-    ZWEI;
+    displayWord(matrix, h_zwei, color);
     Serial.print("Zwei ");
     break;
   case 3:
-    DREI;
+    displayWord(matrix, h_drei, color);
     Serial.print("Drei ");
     break;
   case 4:
-    VIER;
+    displayWord(matrix, h_vier, color);
     Serial.print("Vier ");
     break;
   case 5:
-    FUENF;
+    displayWord(matrix, h_fuenf, color);
     Serial.print("Fuenf ");
     break;
   case 6:
-    SECHS;
+    displayWord(matrix, h_sechs, color);
     Serial.print("Sechs ");
     break;
   case 7:
-    SIEBEN;
+    displayWord(matrix, h_sieben, color);
     Serial.print("Sieben ");
     break;
   case 8:
-    ACHT;
+    displayWord(matrix, h_acht, color);
     Serial.print("Acht ");
     break;
   case 9:
-    NEUN;
+    displayWord(matrix, h_neun, color);
     Serial.print("Neun ");
     break;
   case 10:
-    ZEHN;
+    displayWord(matrix, h_zehn, color);
     Serial.print("Zehn ");
     break;
   case 11:
-    ELF;
+    displayWord(matrix, h_elf, color);
     Serial.print("Elf ");
     break;
   case 0:
-    ZWOELF;
+    displayWord(matrix, h_zwoelf, color);
     Serial.print("Zwoelf ");
     break;
   }
   if (mm<5) {
-    UM;
+    displayWord(matrix, uhr, color);
     Serial.print("Uhr ");
   }  
   Serial.print("\n");
