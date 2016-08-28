@@ -118,14 +118,14 @@ void initWords() {
   h_neun.endPixel = 6 ;
 
   uhr.row = 9 ;
-  uhr.row =8 ;
-  uhr.row =10;
+  uhr.startPixel =8 ;
+  uhr.endPixel =10;
 }
 
 
 void displayWord(clockWord_t cw, int color) {
   for (int x=cw.startPixel; x<=cw.endPixel; x++) {
-   matrix.drawPixel(x, cw.row, color);
+    matrix.drawPixel(x, cw.row, color);
   }
 }
 
@@ -133,17 +133,31 @@ void displayWord(clockWord_t cw, int color) {
 bool updateClockDisplay(int color, int hh, int mm) {
   static bool initial = false;
   static bool updated = false;
+  static int lastMin = -1;
   bool retVal = false;
 
   if ((!initial) || (((mm % 5) == 0) && !updated)) {
     updateClockDisplay_int(color,  hh,  mm);
-    updated = true;
+    if (initial) updated = true;
     initial = true;
     retVal = true;
   }
 
   if ((mm % 5) == 1) {
     updated = false;
+  }
+
+  if (mm != lastMin) {
+    int idx;
+    lastMin = mm;
+    for (idx=0; idx<4; idx++) {
+      if (idx < (mm % 5)) {
+        matrix.drawPixel(11, 9-idx, color);
+      } else {
+        matrix.drawPixel(11, 9-idx, 0);
+      }
+    }
+    retVal = true;
   }
 
   return retVal;
