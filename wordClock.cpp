@@ -130,13 +130,13 @@ void displayWord(clockWord_t cw, int color) {
 }
 
 
-bool updateClockDisplay(int color, int hh, int mm) {
+bool updateClockDisplay(int color, int hh, int mm, bool force) {
   static bool initial = false;
   static bool updated = false;
   static int lastMin = -1;
   bool retVal = false;
 
-  if ((!initial) || (((mm % 5) == 0) && !updated)) {
+  if (force || (!initial) || (((mm % 5) == 0) && !updated)) {
     updateClockDisplay_int(color,  hh,  mm);
     if (initial) updated = true;
     initial = true;

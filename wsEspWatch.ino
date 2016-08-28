@@ -3,8 +3,11 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_NeoMatrix.h>
 #include <Adafruit_NeoPixel.h>
-#include <ESP8266httpUpdate.h> 
+#include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+#include <ESP8266mDNS.h>
 #include "wordClock.h"
+#include "webServer.h"
 
 #define PIN (4)
 
@@ -16,9 +19,12 @@ Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(12, 10, PIN,
   NEO_MATRIX_COLUMNS + NEO_MATRIX_ZIGZAG,
   NEO_GRB            + NEO_KHZ800);
 
+ESP8266WebServer webServer(80);
+
 int color;
 int brightness = 60;
 int lastDispSec = 0;
+String IP;
 
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "de.pool.ntp.org", 7200 /* 2h offset */, 60000 /* Update once per minute*/);
@@ -50,12 +56,33 @@ void setup() {
     Serial.print ( "." );
   }
 
+  if (MDNS.begin("wortuhr")) {
+    Serial.println("MDNS responder started");
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+  }
+
+  IPAddress localIP = WiFi.localIP();
+  IP = String(localIP[0]);
+  IP += ".";
+  IP += String(localIP[1]);
+  IP += ".";
+  IP += String(localIP[2]);
+  IP += ".";
+  IP += String(localIP[3]);
+
+  webServer.on("/", handleRoot);
+  webServer.onNotFound(handleNotFound);
+  webServer.begin();
+  Serial.println("HTTP server started");
+
   timeClient.begin();
   
   color = matrix.Color(255, 114, 0);
   matrix.show();
 
   initWords();
+  initWebServer(brightness);
 }
 
 void loop() {
@@ -67,10 +94,22 @@ void loop() {
     Serial.println(timeClient.getFormattedTime());
   }
 
-  if (updateClockDisplay(color, timeClient.getHours(), timeClient.getMinutes())) {
+  if (updateClockDisplay(color, timeClient.getHours(), timeClient.getMinutes(), false)) {
     matrix.show();
   }
+  webServer.handleClient();
 }
 
+void updateColor(int red, int green, int blue) {
+  color = matrix.Color(red, green, blue);
+  updateClockDisplay(color, timeClient.getHours(), timeClient.getMinutes(), true);
+  matrix.show();
+}
+
+void updateBrightness(int newBrightness) {
+  brightness = newBrightness;
+  matrix.setBrightness(brightness);
+  matrix.show();
+}
 
 

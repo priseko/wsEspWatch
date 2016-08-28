@@ -7,7 +7,7 @@ typedef struct clockWord_t {
 } clockWord_t;
 
 void initWords();
-bool updateClockDisplay(int color, int hh, int mm);
+bool updateClockDisplay(int color, int hh, int mm, bool force);
 
 static void updateClockDisplay_int(int color, int hh, int mm);
 
